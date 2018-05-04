@@ -1,0 +1,36 @@
+{
+  "name": "alexwijn/laravel-cte",
+  "description": "Common Table Expression for Laravel",
+  "keywords": [
+    "laravel",
+    "common",
+    "table",
+    "expression"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Alex Wijnholds"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.0",
+    "illuminate/support": ">=4.3|5.*",
+    "illuminate/database": ">=4.3|5.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Alexwijn\\CTE\\": "src/"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0-dev"
+    },
+    "laravel": {
+      "providers": [
+        "Alexwijn\\CTE\\ServiceProvider"
+      ]
+    }
+  }
+}
