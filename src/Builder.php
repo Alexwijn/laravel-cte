@@ -16,6 +16,7 @@ use Illuminate\Support\Fluent;
  * @method $this limit($value)
  * @method $this offset($value)
  * @method $this orderBy($column, $direction)
+1 * @method $this constraint($constraint = null, $operator = null, $value = null, $boolean = 'and')
  */
 class Builder
 {
@@ -134,6 +135,28 @@ class Builder
     public function rightJoin($model, $first, $operator = null, $second = null)
     {
         return $this->join($model, $first, $operator, $second, 'right');
+    }
+
+    /**
+     * Execute the query and get the first result.
+     *
+     * @param  array $columns
+     * @return Fluent
+     */
+    public function first($columns = ['*'])
+    {
+        return $this->take(1)->get($columns)->first();
+    }
+
+    /**
+     * Pluck a single column's value from the first result of a query.
+     *
+     * @param  string $column
+     * @return mixed
+     */
+    public function pluck($column)
+    {
+        return $this->first([$column])->get($column);
     }
 
     /**
@@ -263,27 +286,11 @@ class Builder
     }
 
     /**
-     * Apply the given scope on the current builder instance.
-     *
-     * @param  callable $scope
-     * @param  array    $parameters
-     * @return mixed
-     */
-    protected function callScope(callable $scope, $parameters = [])
-    {
-        array_unshift($parameters, $this);
-
-        $result = $scope(...array_values($parameters)) ?? $this;
-
-        return $result;
-    }
-
-    /**
      * Get the model instance being queried.
      *
      * @return \Alexwijn\CTE\Model
      */
-    protected function getModel()
+    public function getModel()
     {
         return $this->model;
     }
@@ -300,5 +307,21 @@ class Builder
         $this->model = $model;
 
         return $this;
+    }
+
+    /**
+     * Apply the given scope on the current builder instance.
+     *
+     * @param  callable $scope
+     * @param  array    $parameters
+     * @return mixed
+     */
+    protected function callScope(callable $scope, $parameters = [])
+    {
+        array_unshift($parameters, $this);
+
+        $result = $scope(...array_values($parameters)) ?? $this;
+
+        return $result;
     }
 }
