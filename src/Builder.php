@@ -156,7 +156,11 @@ class Builder
      */
     public function pluck($column)
     {
-        return $this->first([$column])->get($column);
+        if ($result = $this->first([$column])) {
+            return $result->get($column);
+        };
+
+        return null;
     }
 
     /**
