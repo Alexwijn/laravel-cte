@@ -26,18 +26,21 @@ class MariadbGrammar extends MySqlGrammar
     {
         if (count($statements = $builder->with) > 0) {
             $components = [];
-            $bindings = [];
             foreach ($statements as $statement) {
                 $query = $statement->createWithQuery();
                 foreach ($statement->constraints() as $constraint) {
                     $constraint($query);
                 }
 
-                $bindings = array_merge($query->getRawBindings()['where'], $bindings);
-                $components[] = $statement->getAlias() . ' AS (' . $query->toSql() . ')';
+                $sql = $query->toSql();
+                foreach ($query->getBindings() as $binding) {
+                    $value = is_numeric($binding) ? $binding : "'" . $binding . "'";
+                    $sql = preg_replace('/\?/', $value, $sql, 1);
+                }
+
+                $components[] = $statement->getAlias() . ' AS (' . $sql . ')';
             }
 
-            $builder->setBindings(array_merge($bindings, $builder->getRawBindings()['where']));
             return 'WITH ' . implode($components, ',');
         }
 
