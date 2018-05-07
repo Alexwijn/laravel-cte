@@ -16,7 +16,7 @@ use Illuminate\Support\Fluent;
  * @method $this limit($value)
  * @method $this offset($value)
  * @method $this orderBy($column, $direction)
-1 * @method $this constraint($constraint = null, $operator = null, $value = null, $boolean = 'and')
+ * @method $this constraint($constraint = null, $operator = null, $value = null, $boolean = 'and')
  */
 class Builder
 {
