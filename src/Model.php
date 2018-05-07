@@ -17,12 +17,14 @@ abstract class Model
      * @var array
      */
     protected static $booted = [];
+
     /**
      * The array of global scopes on the model.
      *
      * @var array
      */
     protected static $globalScopes = [];
+
     /**
      * The table alias associated with the model.
      *
@@ -174,12 +176,16 @@ abstract class Model
      * When we create the base query we add the following constraint to the builder.
      *
      * @param array|string|null $constraints
-     * @return \Alexwijn\CTE\Model
+     * @return $this
      */
     public function constraint($constraint = null, $operator = null, $value = null, $boolean = 'and')
     {
-        if (!($constraint instanceof \Closure)) {
+        if (!is_array($constraint) && !($constraint instanceof \Closure)) {
             $constraint = function (IlluminateBuilder $query) use ($constraint, $operator, $value, $boolean) {
+                if (is_array($operator) || is_array($value)) {
+                    return $query->whereIn($constraint, $operator, $value, $boolean);
+                }
+
                 return $query->where($constraint, $operator, $value, $boolean);
             };
         }
