@@ -3,6 +3,7 @@
 namespace Alexwijn\CTE;
 
 use Alexwijn\CTE\Query\Builder as QueryBuilder;
+use Illuminate\Database\Query\Builder as IlluminateBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Fluent;
 
@@ -16,7 +17,68 @@ use Illuminate\Support\Fluent;
  * @method $this limit($value)
  * @method $this offset($value)
  * @method $this orderBy($column, $direction)
- * @method $this constraint($constraint = null, $operator = null, $value = null, $boolean = 'and')
+ *
+ * @method $this constraint($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orConstraint($column, $operator = null, $value = null)
+ * @method $this constraintRaw($sql, array $bindings = [], $boolean = 'and')
+ * @method $this orConstraintRaw($sql, array $bindings = [])
+ * @method $this constraintBetween($column, array $values, $boolean = 'and', $not = false)
+ * @method $this orConstraintBetween($column, array $values)
+ * @method $this constraintNotBetween($column, array $values, $boolean = 'and')
+ * @method $this orConstraintNotBetween($column, array $values)
+ * @method $this constraintNested(\Closure $callback, $boolean = 'and')
+ * @method $this addNestedConstraintQuery($query, $boolean = 'and')
+ * @method $this constraintSub($column, $operator, \Closure $callback, $boolean)
+ * @method $this constraintExists(\Closure $callback, $boolean = 'and', $not = false)
+ * @method $this orConstraintExists(\Closure $callback, $not = false)
+ * @method $this constraintNotExists(\Closure $callback, $boolean = 'and')
+ * @method $this constraintExistsQuery(Builder $query, $boolean = 'and', $not = false)
+ * @method $this orConstraintNotExists(\Closure $callback)
+ * @method $this constraintIn($column, $values, $boolean = 'and', $not = false)
+ * @method $this orConstraintIn($column, $values)
+ * @method $this constraintNotIn($column, $values, $boolean = 'and')
+ * @method $this orConstraintNotIn($column, $values)
+ * @method $this constraintInSub($column, \Closure $callback, $boolean, $not)
+ * @method $this constraintNull($column, $boolean = 'and', $not = false)
+ * @method $this orConstraintNull($column)
+ * @method $this constraintNotNull($column, $boolean = 'and')
+ * @method $this orConstraintNotNull($column)
+ * @method $this constraintDate($column, $operator, $value, $boolean = 'and')
+ * @method $this constraintDay($column, $operator, $value, $boolean = 'and')
+ * @method $this constraintMonth($column, $operator, $value, $boolean = 'and')
+ * @method $this constraintYear($column, $operator, $value, $boolean = 'and')
+ * @method $this dynamicConstraint($method, $parameters)
+ *
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
+ * @method $this whereRaw($sql, array $bindings = [], $boolean = 'and')
+ * @method $this orWhereRaw($sql, array $bindings = [])
+ * @method $this whereBetween($column, array $values, $boolean = 'and', $not = false)
+ * @method $this orWhereBetween($column, array $values)
+ * @method $this whereNotBetween($column, array $values, $boolean = 'and')
+ * @method $this orWhereNotBetween($column, array $values)
+ * @method $this whereNested(\Closure $callback, $boolean = 'and')
+ * @method $this addNestedWhereQuery($query, $boolean = 'and')
+ * @method $this whereSub($column, $operator, \Closure $callback, $boolean)
+ * @method $this whereExists(\Closure $callback, $boolean = 'and', $not = false)
+ * @method $this orWhereExists(\Closure $callback, $not = false)
+ * @method $this whereNotExists(\Closure $callback, $boolean = 'and')
+ * @method $this whereExistsQuery(Builder $query, $boolean = 'and', $not = false)
+ * @method $this orWhereNotExists(\Closure $callback)
+ * @method $this whereIn($column, $values, $boolean = 'and', $not = false)
+ * @method $this orWhereIn($column, $values)
+ * @method $this whereNotIn($column, $values, $boolean = 'and')
+ * @method $this orWhereNotIn($column, $values)
+ * @method $this whereInSub($column, \Closure $callback, $boolean, $not)
+ * @method $this whereNull($column, $boolean = 'and', $not = false)
+ * @method $this orWhereNull($column)
+ * @method $this whereNotNull($column, $boolean = 'and')
+ * @method $this orWhereNotNull($column)
+ * @method $this whereDate($column, $operator, $value, $boolean = 'and')
+ * @method $this whereDay($column, $operator, $value, $boolean = 'and')
+ * @method $this whereMonth($column, $operator, $value, $boolean = 'and')
+ * @method $this whereYear($column, $operator, $value, $boolean = 'and')
+ * @method $this dynamicWhere($method, $parameters)
  */
 class Builder
 {
@@ -30,7 +92,7 @@ class Builder
     /**
      * The base query builder instance.
      *
-     * @var \Alexwijn\CTE\Query\Builder
+     * @var QueryBuilder
      */
     protected $query;
 
@@ -57,7 +119,7 @@ class Builder
     /**
      * Builder constructor.
      *
-     * @param \Alexwijn\CTE\Query\Builder $query
+     * @param QueryBuilder $query
      */
     public function __construct(QueryBuilder $query)
     {
@@ -265,9 +327,16 @@ class Builder
             return $this->callScope([$this->model, $scope], $parameters);
         }
 
-        if (in_array($method, $this->passthru)) {
+        if (in_array($method, $this->passthru) || str_contains($method, 'where')) {
             $this->query->{$method}(...$parameters);
             return $this;
+        }
+
+        if ($method !== 'constraint' && str_contains($method, 'constraint')) {
+            return $this->model->constraint(function (IlluminateBuilder $builder) use ($method, $parameters) {
+                $method = str_replace('constraint', 'where', $method);
+                $builder->$method(...$parameters);
+            });
         }
 
         if ($method === 'constraint') {

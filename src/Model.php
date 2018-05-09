@@ -182,14 +182,6 @@ abstract class Model
     {
         if (!is_array($constraint) && !($constraint instanceof \Closure)) {
             $constraint = function (IlluminateBuilder $query) use ($constraint, $operator, $value, $boolean) {
-                if (is_array($value)) {
-                    return $query->whereIn($constraint, $value, $boolean);
-                }
-
-                if (is_array($operator)) {
-                    return $query->whereIn($constraint, $operator, $boolean);
-                }
-
                 return $query->where($constraint, $operator, $value, $boolean);
             };
         }
