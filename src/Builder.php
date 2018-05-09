@@ -44,7 +44,10 @@ class Builder
         'groupBy',
         'take',
         'limit',
-        'offset'
+        'offset',
+        'where',
+        'whereNull',
+        'whereNotNull'
     ];
 
     /**

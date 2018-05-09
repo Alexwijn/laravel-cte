@@ -190,6 +190,13 @@ abstract class Model
                     return $query->whereIn($constraint, $operator, $boolean);
                 }
 
+                if($value === null){
+                    if($operator === '!='){
+                        return $query->whereNotNull($constraint);
+                    }
+                    return $query->whereNull($constraint);
+                }
+
                 return $query->where($constraint, $operator, $value, $boolean);
             };
         }
