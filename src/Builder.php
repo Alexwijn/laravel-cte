@@ -235,6 +235,61 @@ class Builder
     }
 
     /**
+     * Retrieve the "count" result of the query.
+     *
+     * @param  string  $columns
+     * @return int
+     */
+    public function count($columns = '*')
+    {
+        return $this->query->count($columns);
+    }
+
+    /**
+     * Retrieve the minimum value of a given column.
+     *
+     * @param  string  $column
+     * @return mixed
+     */
+    public function min($column)
+    {
+        return $this->query->min($column);
+    }
+
+    /**
+     * Retrieve the maximum value of a given column.
+     *
+     * @param  string  $column
+     * @return mixed
+     */
+    public function max($column)
+    {
+        return $this->query->max($column);
+    }
+
+    /**
+     * Retrieve the sum of the values of a given column.
+     *
+     * @param  string  $column
+     * @return mixed
+     */
+    public function sum($column)
+    {
+        return $this->query->sum($column);
+    }
+
+    /**
+     * Retrieve the average of the values of a given column.
+     *
+     * @param  string  $column
+     * @return mixed
+     */
+    public function avg($column)
+    {
+        return $this->query->avg($column);
+    }
+
+    /**
      * Execute the query.
      *
      * @param  array $columns
