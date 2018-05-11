@@ -225,6 +225,15 @@ class Builder
         return null;
     }
 
+    public function chunk($count, \Closure $callback)
+    {
+        $this->query->chunk($count, function ($rows) use ($callback) {
+            $callback(Collection::make($rows)->map(function ($row) {
+                return new Fluent($row);
+            }));
+        });
+    }
+
     /**
      * Execute the query.
      *
