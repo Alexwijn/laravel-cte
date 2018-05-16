@@ -78,6 +78,12 @@ use Illuminate\Support\Fluent;
  * @method $this whereDay($column, $operator, $value, $boolean = 'and')
  * @method $this whereMonth($column, $operator, $value, $boolean = 'and')
  * @method $this whereYear($column, $operator, $value, $boolean = 'and')
+ *
+ * @method $this having($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orHaving($column, $operator = null, $value = null)
+ * @method $this havingRaw($sql, array $bindings = [], $boolean = 'and')
+ * @method $this orHavingRaw($sql, array $bindings = [])
+ *
  * @method $this dynamicWhere($method, $parameters)
  */
 class Builder
@@ -180,9 +186,9 @@ class Builder
      * @param null                       $second
      * @return \Alexwijn\CTE\Builder
      */
-    public function leftJoin($model, $first, $operator = null, $second = null)
+    public function leftJoin($table, $first, $operator = null, $second = null)
     {
-        return $this->join($model, $first, $operator, $second, 'left');
+        return $this->join($table, $first, $operator, $second, 'left');
     }
 
     /**
@@ -194,9 +200,9 @@ class Builder
      * @param null                       $second
      * @return \Alexwijn\CTE\Builder
      */
-    public function rightJoin($model, $first, $operator = null, $second = null)
+    public function rightJoin($table, $first, $operator = null, $second = null)
     {
-        return $this->join($model, $first, $operator, $second, 'right');
+        return $this->join($table, $first, $operator, $second, 'right');
     }
 
     /**
@@ -237,7 +243,7 @@ class Builder
     /**
      * Retrieve the "count" result of the query.
      *
-     * @param  string  $columns
+     * @param  string $columns
      * @return int
      */
     public function count($columns = '*')
@@ -248,7 +254,7 @@ class Builder
     /**
      * Retrieve the minimum value of a given column.
      *
-     * @param  string  $column
+     * @param  string $column
      * @return mixed
      */
     public function min($column)
@@ -259,7 +265,7 @@ class Builder
     /**
      * Retrieve the maximum value of a given column.
      *
-     * @param  string  $column
+     * @param  string $column
      * @return mixed
      */
     public function max($column)
@@ -270,7 +276,7 @@ class Builder
     /**
      * Retrieve the sum of the values of a given column.
      *
-     * @param  string  $column
+     * @param  string $column
      * @return mixed
      */
     public function sum($column)
@@ -281,7 +287,7 @@ class Builder
     /**
      * Retrieve the average of the values of a given column.
      *
-     * @param  string  $column
+     * @param  string $column
      * @return mixed
      */
     public function avg($column)
@@ -391,7 +397,10 @@ class Builder
             return $this->callScope([$this->model, $scope], $parameters);
         }
 
-        if (in_array($method, $this->passthru) || str_contains($method, 'where')) {
+        if (in_array($method, $this->passthru) ||
+            str_contains($method, 'where') ||
+            str_contains($method, 'having')
+        ) {
             $this->query->{$method}(...$parameters);
             return $this;
         }
@@ -408,7 +417,7 @@ class Builder
             return $this;
         }
 
-        return $this->{$method}(...$parameters);
+        return trigger_error('Call to undefined method ' . __CLASS__ . '::' . $method . '()', E_USER_ERROR);
     }
 
     /**
