@@ -456,6 +456,16 @@ class Builder
     }
 
     /**
+     * Get the underlying query builder instance.
+     *
+     * @return \Illuminate\Database\Query\Builder|static
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    /**
      * Apply the given scope on the current builder instance.
      *
      * @param  callable $scope
