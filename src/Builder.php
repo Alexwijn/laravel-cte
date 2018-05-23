@@ -419,7 +419,8 @@ class Builder
             return $this;
         }
 
-        return trigger_error('Call to undefined method ' . __CLASS__ . '::' . $method . '()', E_USER_ERROR);
+        $className = get_class($this);
+        throw new \BadMethodCallException("Call to undefined method {$className}::{$method}()");
     }
 
     /**
