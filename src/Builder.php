@@ -3,7 +3,10 @@
 namespace Alexwijn\CTE;
 
 use Alexwijn\CTE\Query\Builder as QueryBuilder;
+use Illuminate\Container\Container;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Query\Builder as IlluminateBuilder;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Fluent;
 
@@ -376,6 +379,27 @@ class Builder
         }
 
         return $builder;
+    }
+
+    /**
+     * Paginate the given query into a simple paginator.
+     *
+     * @param  int      $perPage
+     * @param  array    $columns
+     * @param  string   $pageName
+     * @param  int|null $currentPage
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $currentPage = null)
+    {
+        $currentPage = $currentPage ?: Paginator::resolveCurrentPage($pageName);
+
+        $total = $this->count($columns);
+        $options = ['path' => \Route::current()->getPath(), 'pageName' => $pageName];
+        $items = $total ? $this->forPage($currentPage, $perPage)->get($columns) : collect();
+
+        $parameters = compact('items', 'total', 'perPage', 'currentPage', 'options');
+        return Container::getInstance()->makeWith(LengthAwarePaginator::class, $parameters);
     }
 
     /**
