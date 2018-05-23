@@ -17,6 +17,7 @@ use Illuminate\Support\Fluent;
  * @method $this limit($value)
  * @method $this offset($value)
  * @method $this orderBy($column, $direction)
+ * @method $this forPage($page, $perPage = 15)
  *
  * @method $this constraint($column, $operator = null, $value = null, $boolean = 'and')
  * @method $this orConstraint($column, $operator = null, $value = null)
@@ -112,7 +113,8 @@ class Builder
         'groupBy',
         'take',
         'limit',
-        'offset'
+        'offset',
+        'forPage'
     ];
 
     /**
