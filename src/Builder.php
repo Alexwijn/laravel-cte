@@ -15,6 +15,7 @@ use Illuminate\Support\Fluent;
  *
  * @method $this select($columns = ['*'])
  * @method $this addSelect($column)
+ * @method $this selectRaw($column)
  * @method $this groupBy($column)
  * @method $this take($value)
  * @method $this limit($value)
@@ -111,6 +112,7 @@ class Builder
      */
     protected $passthru = [
         'addSelect',
+        'selectRaw',
         'select',
         'orderBy',
         'groupBy',
