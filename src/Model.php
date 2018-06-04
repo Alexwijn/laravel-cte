@@ -11,7 +11,7 @@ use Illuminate\Support\Arr;
  *
  * @mixin \Alexwijn\CTE\Builder
  */
-abstract class Model
+abstract class Model implements Constrainable
 {
     /**
      * @var array

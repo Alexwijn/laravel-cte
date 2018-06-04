@@ -23,37 +23,6 @@ use Illuminate\Support\Fluent;
  * @method $this orderBy($column, $direction)
  * @method $this forPage($page, $perPage = 15)
  *
- * @method $this constraint($column, $operator = null, $value = null, $boolean = 'and')
- * @method $this orConstraint($column, $operator = null, $value = null)
- * @method $this constraintRaw($sql, array $bindings = [], $boolean = 'and')
- * @method $this orConstraintRaw($sql, array $bindings = [])
- * @method $this constraintBetween($column, array $values, $boolean = 'and', $not = false)
- * @method $this orConstraintBetween($column, array $values)
- * @method $this constraintNotBetween($column, array $values, $boolean = 'and')
- * @method $this orConstraintNotBetween($column, array $values)
- * @method $this constraintNested(\Closure $callback, $boolean = 'and')
- * @method $this addNestedConstraintQuery($query, $boolean = 'and')
- * @method $this constraintSub($column, $operator, \Closure $callback, $boolean)
- * @method $this constraintExists(\Closure $callback, $boolean = 'and', $not = false)
- * @method $this orConstraintExists(\Closure $callback, $not = false)
- * @method $this constraintNotExists(\Closure $callback, $boolean = 'and')
- * @method $this constraintExistsQuery(Builder $query, $boolean = 'and', $not = false)
- * @method $this orConstraintNotExists(\Closure $callback)
- * @method $this constraintIn($column, $values, $boolean = 'and', $not = false)
- * @method $this orConstraintIn($column, $values)
- * @method $this constraintNotIn($column, $values, $boolean = 'and')
- * @method $this orConstraintNotIn($column, $values)
- * @method $this constraintInSub($column, \Closure $callback, $boolean, $not)
- * @method $this constraintNull($column, $boolean = 'and', $not = false)
- * @method $this orConstraintNull($column)
- * @method $this constraintNotNull($column, $boolean = 'and')
- * @method $this orConstraintNotNull($column)
- * @method $this constraintDate($column, $operator, $value, $boolean = 'and')
- * @method $this constraintDay($column, $operator, $value, $boolean = 'and')
- * @method $this constraintMonth($column, $operator, $value, $boolean = 'and')
- * @method $this constraintYear($column, $operator, $value, $boolean = 'and')
- * @method $this dynamicConstraint($method, $parameters)
- *
  * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
  * @method $this orWhere($column, $operator = null, $value = null)
  * @method $this whereRaw($sql, array $bindings = [], $boolean = 'and')
@@ -91,7 +60,7 @@ use Illuminate\Support\Fluent;
  *
  * @method $this dynamicWhere($method, $parameters)
  */
-class Builder
+class Builder implements Constrainable
 {
     /**
      * The model being queried.
@@ -487,7 +456,7 @@ class Builder
     /**
      * Get the underlying query builder instance.
      *
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Alexwijn\CTE\Query\Builder|static
      */
     public function getQuery()
     {
