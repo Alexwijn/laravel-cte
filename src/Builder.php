@@ -419,11 +419,15 @@ class Builder implements Constrainable
     }
 
     /**
-     * @param \Alexwijn\CTE\Model $model
+     * @param \Alexwijn\CTE\Model|string $model
      * @return $this
      */
-    public function with(Model $model)
+    public function with($model)
     {
+        if (is_string($model) && class_exists($model)) {
+            $model = new $model;
+        }
+
         $this->query->with($model);
 
         return $this;
