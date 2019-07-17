@@ -88,7 +88,8 @@ class Builder implements Constrainable
         'take',
         'limit',
         'offset',
-        'forPage'
+        'forPage',
+        'pluck'
     ];
 
     /**
@@ -202,21 +203,6 @@ class Builder implements Constrainable
     {
         if ($result = $this->first([$column])) {
             return $result->{$column};
-        }
-
-        return null;
-    }
-
-    /**
-     * Pluck a single column's value from the first result of a query.
-     *
-     * @param  string $column
-     * @return mixed
-     */
-    public function pluck($column)
-    {
-        if ($result = $this->first([$column])) {
-            return $result->get($column);
         }
 
         return null;
